@@ -1,6 +1,8 @@
 import datetime
 
-
+# =========================
+# CLASE CONTACTO
+# =========================
 class Contacto:
     def __init__(self, nombre, apellido, telefono, correo, direccion):
         self.nombre = nombre
@@ -19,12 +21,69 @@ class Contacto:
         print("----------------------")
 
 
-# VECTOR (lista)
-contactos = []
+# =========================
+# CLASE AGENDA (NUEVA)
+# =========================
+class Agenda:
+    def __init__(self):
+        self.contactos = []   # VECTOR
+        self.historial = []   # MATRIZ
 
-# MATRIZ (historial)
-historial = []
+    def agregar_contacto(self, contacto):
+        self.contactos.append(contacto)
+        print("Contacto agregado correctamente.")
 
+    def buscar_contacto(self, nombre):
+        encontrado = False
+        for c in self.contactos:
+            if c.nombre.lower() == nombre.lower():
+                c.mostrar()
+                encontrado = True
+
+                self.historial.append([
+                    "BUSQUEDA",
+                    nombre,
+                    str(datetime.datetime.now())
+                ])
+
+        if not encontrado:
+            print("Contacto no encontrado.")
+
+    def mostrar_contactos(self):
+        if len(self.contactos) == 0:
+            print("No existen contactos registrados.")
+        else:
+            for c in self.contactos:
+                c.mostrar()
+
+    def eliminar_contacto(self, nombre):
+        for c in self.contactos:
+            if c.nombre.lower() == nombre.lower():
+                self.contactos.remove(c)
+                print("Contacto eliminado.")
+
+                self.historial.append([
+                    "ELIMINADO",
+                    nombre,
+                    str(datetime.datetime.now())
+                ])
+                return
+
+        print("Contacto no encontrado.")
+
+    def ver_historial(self):
+        if len(self.historial) == 0:
+            print("No hay historial registrado.")
+        else:
+            print("\n====== HISTORIAL (MATRIZ) ======")
+            for fila in self.historial:
+                print(fila)
+
+
+# =========================
+# PROGRAMA PRINCIPAL
+# =========================
+agenda = Agenda()
 
 while True:
     print("\n====== AGENDA TELEFÓNICA ======")
@@ -32,12 +91,11 @@ while True:
     print("2. Buscar contacto")
     print("3. Mostrar contactos")
     print("4. Eliminar contacto")
-    print("5. Ver historial (Matriz)")
+    print("5. Ver historial")
     print("6. Salir")
 
     opcion = input("Seleccione una opción: ")
 
-    # 1. AGREGAR
     if opcion == "1":
         nombre = input("Nombre: ")
         apellido = input("Apellido: ")
@@ -45,65 +103,23 @@ while True:
         correo = input("Correo: ")
         direccion = input("Dirección: ")
 
-        contactos.append(Contacto(nombre, apellido, telefono, correo, direccion))
+        contacto = Contacto(nombre, apellido, telefono, correo, direccion)
+        agenda.agregar_contacto(contacto)
 
-        print("Contacto agregado correctamente.")
-
-    # 2. BUSCAR
     elif opcion == "2":
-        buscar = input("Ingrese el nombre a buscar: ")
-        encontrado = False
+        nombre = input("Ingrese el nombre a buscar: ")
+        agenda.buscar_contacto(nombre)
 
-        for contacto in contactos:
-            if contacto.nombre.lower() == buscar.lower():
-                contacto.mostrar()
-                encontrado = True
-
-                historial.append([
-                    "BUSQUEDA",
-                    buscar,
-                    str(datetime.datetime.now())
-                ])
-
-        if not encontrado:
-            print("Contacto no encontrado.")
-
-    # 3. MOSTRAR
     elif opcion == "3":
-        if len(contactos) == 0:
-            print("No existen contactos registrados.")
-        else:
-            for contacto in contactos:
-                contacto.mostrar()
+        agenda.mostrar_contactos()
 
-    # 4. ELIMINAR
     elif opcion == "4":
         nombre = input("Nombre del contacto a eliminar: ")
+        agenda.eliminar_contacto(nombre)
 
-        for contacto in contactos:
-            if contacto.nombre.lower() == nombre.lower():
-                contactos.remove(contacto)
-                print("Contacto eliminado.")
-
-                historial.append([
-                    "ELIMINADO",
-                    nombre,
-                    str(datetime.datetime.now())
-                ])
-                break
-        else:
-            print("Contacto no encontrado.")
-
-    # 5. MATRIZ (HISTORIAL)
     elif opcion == "5":
-        if len(historial) == 0:
-            print("No hay historial registrado.")
-        else:
-            print("\n====== HISTORIAL (MATRIZ) ======")
-            for fila in historial:
-                print(fila)
+        agenda.ver_historial()
 
-    # 6. SALIR
     elif opcion == "6":
         print("Programa finalizado.")
         break
